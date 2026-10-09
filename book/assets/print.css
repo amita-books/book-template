@@ -1,0 +1,351 @@
+/* ============================================================
+   인쇄용 스타일 (A4, 흑백 인쇄 기준)
+   - 색 대신 굵기·테두리·기호로 구분한다.
+   - 코드: 80자 + 줄 번호가 본문 폭(170mm)에 들어가도록 8.5pt.
+   ============================================================ */
+
+@page {
+  size: A4;
+  margin: 20mm 20mm 22mm 20mm;
+  @bottom-center {
+    content: counter(page);
+    font-family: "Nanum Gothic", sans-serif;
+    font-size: 9pt;
+  }
+}
+@page :first {
+  @bottom-center { content: none; }
+}
+
+html {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+body {
+  margin: 0;
+  max-width: none;
+  padding: 0;
+  font-family: "Nanum Myeongjo", "AppleMyungjo", serif;
+  font-size: 10.5pt;
+  line-height: 1.7;
+  color: #000;
+  background: #fff;
+  word-break: keep-all;       /* 한글 단어 중간에서 줄바꿈하지 않기 */
+  overflow-wrap: break-word;
+}
+
+/* ---------- 표지 ---------- */
+header#title-block-header {
+  height: 240mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  break-after: page;
+}
+header#title-block-header .title {
+  break-before: auto;          /* 장 제목(h1)의 새 페이지 규칙을 끈다 */
+  font-family: "Nanum Gothic", sans-serif;
+  font-size: 28pt;
+  font-weight: 800;
+  border-top: 3pt solid #000;
+  border-bottom: 3pt solid #000;
+  padding: 10mm 0;
+  margin: 0;
+}
+header#title-block-header .subtitle {
+  font-family: "Nanum Gothic", sans-serif;
+  font-size: 12pt;
+  margin-top: 8mm;
+}
+header#title-block-header .author {
+  font-family: "Nanum Gothic", sans-serif;
+  font-size: 13pt;
+  font-weight: 700;
+  margin-top: 40mm;
+}
+
+/* ---------- 차례 ---------- */
+nav#TOC { break-after: page; }
+nav#TOC > h2 {
+  font-family: "Nanum Gothic", sans-serif;
+  font-size: 18pt;
+  border-bottom: 2pt solid #000;
+}
+nav#TOC ul { list-style: none; padding-left: 0; margin: 0; }
+nav#TOC ul ul { padding-left: 6mm; }
+nav#TOC > ul > li { margin-top: 3mm; font-weight: 700; }
+nav#TOC ul ul li { font-weight: 400; }
+nav#TOC a {
+  display: flex;
+  color: #000;
+  text-decoration: none;
+}
+nav#TOC a .toc-text { flex: 0 1 auto; }
+nav#TOC a .toc-dots {
+  flex: 1 1 auto;
+  border-bottom: 1pt dotted #000;
+  margin: 0 2mm 1.3mm 2mm;
+}
+nav#TOC a .toc-page { flex: 0 0 auto; min-width: 8mm; text-align: right; }
+
+/* ---------- 제목 ---------- */
+h1, h2, h3, h4 {
+  font-family: "Nanum Gothic", sans-serif;
+  line-height: 1.35;
+  break-after: avoid;
+  position: relative;          /* 쪽 번호 마커 기준점 */
+}
+/* 각 장(h1)은 새 페이지에서 시작 */
+h1 {
+  break-before: page;
+  font-size: 22pt;
+  font-weight: 800;
+  margin: 0 0 8mm 0;
+  padding: 18mm 0 4mm 0;
+  border-bottom: 3pt solid #000;
+}
+/* 권 표지: 새 페이지 가운데에 크게. 다음 장(h1)은 다시 새 페이지 */
+h1.volume {
+  margin-top: 70mm;
+  padding: 8mm 0;
+  text-align: center;
+  font-size: 28pt;
+  border-top: 3pt solid #000;
+  border-bottom: 3pt solid #000;
+}
+div.volume-intro {
+  margin: 12mm 10mm 0 10mm;
+  font-size: 11pt;
+}
+div.volume-intro ol { margin-top: 5mm; }
+div.volume-intro li { margin-bottom: 2mm; }
+
+h2 {
+  font-size: 15pt;
+  margin: 9mm 0 3mm 0;
+  padding-bottom: 1mm;
+  border-bottom: 1pt solid #000;
+}
+h3 { font-size: 12pt; margin: 6mm 0 2mm 0; }
+h3::before { content: "▶ "; }
+h4 { font-size: 10.5pt; margin: 4mm 0 1mm 0; }
+
+/* 쪽 번호 계산용 마커 (build.py가 1차 인쇄 후 제거) */
+.pg-marker {
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 1px;
+  color: #fff;
+}
+
+p { margin: 0 0 3mm 0; orphans: 2; widows: 2; }
+strong { font-family: "Nanum Gothic", sans-serif; font-weight: 800; }
+a { color: #000; text-decoration: none; }
+hr { border: 0; border-top: 1pt solid #000; }
+
+/* ---------- 인라인 코드 ---------- */
+code {
+  font-family: "JetBrains Mono", "Nanum Gothic", monospace;
+  font-size: 0.88em;
+}
+p code, li code, td code {
+  border: 0.5pt solid #777;
+  border-radius: 1.5pt;
+  padding: 0 0.8mm;
+}
+
+/* ---------- 코드 블록 ---------- */
+div.code-with-path {
+  margin: 3mm 0 4mm 0;
+  break-inside: avoid;   /* 한 쪽보다 긴 코드는 Chrome이 알아서 나눈다 */
+}
+div.code-with-path .code-path {
+  display: block;
+  font-family: "JetBrains Mono", "Nanum Gothic", monospace;
+  font-size: 8pt;
+  font-weight: 700;
+  border: 1pt solid #000;
+  border-bottom: none;
+  padding: 0.8mm 2mm;
+  background: #e6e6e6;
+  break-after: avoid;
+}
+div.code-with-path div.sourceCode { margin-top: 0; }
+/* 생략(...) 뒤에 이어지는 조각: 앞 블록에 붙이고 "중략" 줄만 표시 */
+div.code-cont { margin-top: -4mm; break-before: avoid; }
+div.code-cont .code-path {
+  border-top: none;
+  background: #fff;
+  font-weight: 400;
+  padding: 0 2mm;
+  text-align: center;
+}
+/* 검증하지 않은 비교용 발췌: 점선 테두리 */
+div.excerpt .code-path { border-style: dashed; background: #fff;
+  font-weight: 400; font-family: "Nanum Gothic", sans-serif; }
+div.excerpt div.sourceCode { border-style: dashed; }
+
+div.sourceCode {
+  margin: 3mm 0 4mm 0;
+  border: 1pt solid #000;
+  background: #fff;
+  overflow: visible;
+}
+pre, pre.sourceCode {
+  margin: 0;
+  padding: 1.5mm 2mm;
+  font-family: "JetBrains Mono", "Nanum Gothic", monospace;
+  font-size: 8.5pt;
+  line-height: 1.45;
+  white-space: pre-wrap;     /* 80자 규칙 위반 시 잘리지 않고 접히게 */
+  overflow: visible;
+}
+pre code { font-size: inherit; border: none; padding: 0; }
+/* 합자(ligature) 끄기: --> 가 화살표 한 글자로, != 가 ≠ 로 보이면 안 된다 */
+code, pre {
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "calt" 0;
+}
+/* 줄 번호 없는 블록(그림·출력·폴더 구조)도 같은 테두리 */
+pre:not(.sourceCode) {
+  margin: 3mm 0 4mm 0;
+  border: 1pt solid #000;
+  break-inside: avoid;       /* 그림이 두 쪽으로 찢어지지 않게 */
+}
+
+/* 줄 번호: 회색 대신 작은 글씨 + 세로선 */
+pre.numberSource {
+  margin-left: 0;
+  padding-left: 9mm;
+  border-left: none;
+}
+pre.numberSource code { counter-reset: source-line 0; }
+pre.numberSource code > span {
+  position: relative;
+  left: 0;
+  counter-increment: source-line;
+}
+pre.numberSource code > span > a:first-child::before {
+  content: counter(source-line);
+  position: absolute;
+  left: -9mm;
+  width: 6mm;
+  text-align: right;
+  padding-right: 1.5mm;
+  border-right: 0.5pt solid #000;
+  font-size: 7pt;
+  color: #000;
+}
+/* pandoc 기본 스타일의 들여쓰기(5em)를 없애 80칸이 폭에 들어가게 */
+pre > code.sourceCode > span {
+  display: inline;
+  text-indent: 0;
+  padding-left: 0;
+}
+pre > code.sourceCode > span > a:first-child::before { text-decoration: none; }
+
+/* 흑백용 문법 강조: 굵게/기울임만 사용 */
+code span.kw, code span.cf, code span.im { font-weight: 700; color: #000; }
+code span.co, code span.do, code span.an { font-style: italic; color: #000; }
+code span.st, code span.ch, code span.ss { color: #000; }
+code span { color: #000 !important; text-decoration: none !important; }
+
+/* ---------- 박스 ---------- */
+div.note, div.warning, div.tip, div.compare, div.check, div.quiz, div.principle {
+  margin: 4mm 0;
+  padding: 2.5mm 3.5mm;
+  border: 1pt solid #000;
+  break-inside: avoid;
+}
+div.note::before, div.warning::before, div.tip::before, div.compare::before,
+div.check::before, div.quiz::before, div.principle::before {
+  display: block;
+  font-family: "Nanum Gothic", sans-serif;
+  font-weight: 800;
+  margin-bottom: 1mm;
+}
+div.note::before      { content: "[참고]"; }
+div.tip::before       { content: "[팁]"; }
+div.warning           { border: 2.5pt double #000; }
+div.warning::before   { content: "⚠ 주의"; }
+div.compare              { border-left: 4pt solid #000; }
+div.compare::before   { content: "다른 방식과 비교"; }
+div.check             { border-style: dashed; }
+div.check::before     { content: "✔ 직접 확인해 보기"; }
+div.quiz::before      { content: "? 확인 문제"; }
+div.principle         { background: #eeeeee; }
+div.principle::before { content: "★ 적용된 원칙"; }
+div.note > :last-child, div.warning > :last-child, div.tip > :last-child,
+div.compare > :last-child, div.check > :last-child, div.quiz > :last-child,
+div.principle > :last-child { margin-bottom: 0; }
+
+/* 나쁜 코드 / 좋은 코드 표시: ::: bad  /  ::: good
+   라벨은 print.lua가 넣는 실제 요소라서 다음 코드와 같은 쪽에 붙는다 */
+div.bad, div.good { margin: 3mm 0; }
+.box-label {
+  display: block;
+  font-family: "Nanum Gothic", sans-serif;
+  font-weight: 800;
+  font-size: 9pt;
+  break-after: avoid;
+}
+div.bad > .box-label + div, div.good > .box-label + div { margin-top: 1mm; }
+div.bad div.sourceCode { border-style: dashed; }
+
+/* ---------- 메모 여백 ---------- */
+div.memo {
+  margin-top: 6mm;
+  border: 1pt solid #000;
+  padding: 2mm 3mm 0 3mm;
+  break-inside: avoid;
+}
+div.memo::before {
+  content: "메모";
+  display: block;
+  font-family: "Nanum Gothic", sans-serif;
+  font-weight: 800;
+}
+div.memo::after {
+  content: "";
+  display: block;
+  height: 70mm;
+  background: repeating-linear-gradient(
+    to bottom, transparent 0, transparent 9.5mm, #999 9.5mm, #999 10mm);
+}
+
+/* ---------- 표 ---------- */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 3mm 0;
+  font-size: 9.5pt;
+  break-inside: auto;
+}
+th, td { border: 0.75pt solid #000; padding: 1mm 2mm; vertical-align: top; }
+/* 표 안의 긴 코드(URI, 오류 메시지)는 어디서든 줄을 바꾼다.
+   이게 없으면 표가 본문 폭을 넘고, Chrome이 모든 쪽을 축소 인쇄한다 */
+th code, td code { overflow-wrap: anywhere; }
+/* pandoc이 구분선(---) 길이로 정한 열 너비 비율을 무시하고,
+   내용에 맞춰 브라우저가 열 너비를 정하게 한다 */
+table col { width: auto !important; }
+thead th {
+  font-family: "Nanum Gothic", sans-serif;
+  background: #e6e6e6;
+  border-bottom: 1.5pt solid #000;
+}
+tr { break-inside: avoid; }
+
+/* ---------- 그림 ---------- */
+figure { margin: 4mm 0; text-align: center; break-inside: avoid; }
+figure img, p img { max-width: 100%; }
+figcaption { font-size: 9pt; margin-top: 1mm; }
+figcaption::before { content: "그림 · "; font-weight: 700; }
+
+blockquote {
+  margin: 3mm 0;
+  padding-left: 4mm;
+  border-left: 2pt solid #000;
+}
+ul, ol { padding-left: 6mm; margin: 0 0 3mm 0; }
